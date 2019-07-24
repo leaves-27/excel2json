@@ -63,9 +63,6 @@ program
   .option('-o, --out', '指定要输出的目录')
   .option('-t, --theme', '指定要采用的主题文件路径')
   .action(function (options1, options2, options3) {
-  	console.log('options1', options1);
-  	console.log('options2', options2);
-  	console.log('options1-1', !options1);
     if(!options1){
     	console.log('请指定要转换的源文件');
     	return;
@@ -74,7 +71,6 @@ program
 		console.log('请指定要输出的目录');
     	return;
     }
-    console.log('options3:', typeof options3 === 'string' ? options3 : '');
     generateJsonByPathAndOutDir(options1, options2, typeof options3 === 'string' ? options3 : '');
   })
   .parse(process.argv);
