@@ -1,14 +1,18 @@
 {
   "name": "excel2json",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "根据excel文件生成json文件",
+  "main": "./bin/excel2json.js",
   "scripts": {
     "build": "node index.js"
   },
+  "bin": {
+    "excel2json": "./bin/excel2json.js"  
+  },  
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "commander": "^2.20.0",
     "xlsx": "^0.14.4"
   }
 }
