@@ -43,8 +43,9 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 			if(item) {
 				const newItem = !!themePath ? getCustomerKeyItem(item, theme) : item;
 				if (!id){
+					const sheetId = worksheet['!ref'];
 					newData.push({
-						id: 'code_' + worksheet['!ref'] + '_' + index,
+						id: 'code_' + sheetId.replace(':', '') + '_' + index,
 						...newItem
 					});
 				} else {
