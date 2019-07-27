@@ -3,7 +3,8 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 const getCustomerKeyItem = (item, theme) => { // '国际编码'
 	const data = {};
-	Object.keys(theme).forEach((subItem)=>{
+	const themeKeys = Object.keys(theme);
+	themeKeys.forEach((subItem, index)=>{
 		data[theme[subItem]] = item[subItem];
 	})
 	return data;
@@ -33,15 +34,27 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 		const newData = [];
 		const theme = require(themePath);
 
-		data.forEach((item)=>{
+		data.forEach((item, index)=>{
+			const themeKeys = Object.keys(theme);
+			const id = themeKeys.find((key)=>{
+				return theme[key] === 'id';
+			});
+
 			if(item) {
 				const newItem = !!themePath ? getCustomerKeyItem(item, theme) : item;
-				newData.push(newItem);
+				if (!id){
+					newData.push({
+						id: 'code_' + worksheet['!ref'] + '_' + index,
+						...newItem
+					});
+				} else {
+					newData.push(newItem);
+				}
 			}
 		});
 		return JSON.stringify(newData);
 	}
-	sheetNames.forEach((item)=>{
+	sheetNames.forEach((item, index)=>{
 		// 根据表名获取对应某张表
 		const worksheet = workbook.Sheets[item];
 		try {
