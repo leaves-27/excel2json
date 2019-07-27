@@ -13,7 +13,7 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 	const workbook = XLSX.readFile(path);
 	// 获取 Excel 中所有表名
 	const sheetNames = workbook.SheetNames;
-	const getJsonOfsheet = (worksheet)=>{
+	const getJsonOfsheet = (worksheet, sheetName)=>{
 		const headers = {};
 		const data = [];
 		const keys = Object.keys(worksheet);
@@ -33,33 +33,33 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 		// 剔除为Null的值
 		const newData = [];
 		const theme = require(themePath);
+		const themeKeys = Object.keys(theme);
+		const id = themeKeys.find((key)=>{
+			return theme[key] === 'id';
+		});
 
 		data.forEach((item, index)=>{
-			const themeKeys = Object.keys(theme);
-			const id = themeKeys.find((key)=>{
-				return theme[key] === 'id';
-			});
-
 			if(item) {
 				const newItem = !!themePath ? getCustomerKeyItem(item, theme) : item;
-				if (!id){
-					const sheetId = worksheet['!ref'];
-					newData.push({
-						id: 'code_' + sheetId.replace(':', '') + '_' + index,
-						...newItem
-					});
-				} else {
-					newData.push(newItem);
-				}
+				newData.push(newItem);
 			}
 		});
-		return JSON.stringify(newData);
+		return JSON.stringify(newData.map((item, index)=>{
+			if (!id){
+				return {
+					id: 'code_' + sheetName + '_' + (index + 1),
+					...item
+				};
+			} else {
+				return item;
+			}
+		}));
 	}
 	sheetNames.forEach((item, index)=>{
 		// 根据表名获取对应某张表
 		const worksheet = workbook.Sheets[item];
 		try {
-			fs.writeFileSync(`${outDir}/${item}.json`, getJsonOfsheet(worksheet));
+			fs.writeFileSync(`${outDir}/${item}.json`, getJsonOfsheet(worksheet, item));
 		} catch(err){
 			console.log('写文件出错', err);
 		}
