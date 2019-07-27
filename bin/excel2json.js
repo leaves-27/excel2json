@@ -31,16 +31,12 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 		});
 		// 剔除为Null的值
 		const newData = [];
+		const theme = require(themePath);
+
 		data.forEach((item)=>{
 			if(item) {
-				let newItem;
-				if(themePath){
-					const theme = require(themePath);
-					newItem = getCustomerKeyItem(item, theme);
-				} else {
-					newItem = item;
-				}
-				newData.push(item)
+				const newItem = !!themePath ? getCustomerKeyItem(item, theme) : item;
+				newData.push(newItem);
 			}
 		});
 		return JSON.stringify(newData);
