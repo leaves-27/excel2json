@@ -64,10 +64,10 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 			console.log('写文件出错', err);
 		}
 	})
-} 
+}
 
 var program = require('commander');
- 
+
 program
   .option('-s, --source', '指定要转换的源文件')
   .option('-o, --out', '指定要输出的目录')
