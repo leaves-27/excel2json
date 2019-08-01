@@ -13,7 +13,7 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 	const workbook = XLSX.readFile(path);
 	// 获取 Excel 中所有表名
 	const sheetNames = workbook.SheetNames;
-	const getJsonOfsheet = (worksheet, sheetName)=>{
+	const getJsonOfsheet = (worksheet, sheetName, categoryName)=>{
 		const headers = {};
 		const data = [];
 		const keys = Object.keys(worksheet);
@@ -44,26 +44,30 @@ const generateJsonByPathAndOutDir = (path, outDir, themePath) => {
 				newData.push(newItem);
 			}
 		});
-		return JSON.stringify(newData.map((item, index)=>{
+		return newData.map((item, index)=>{
 			if (!id){
 				return {
-					id: 'code_' + sheetName + '_' + (index + 1),
+					id: 'code_' + categoryName + '_' + sheetName + '_' + (index + 1),
 					...item
 				};
 			} else {
 				return item;
 			}
-		}));
+		});
 	}
+	const fileNameIndex = path.lastIndexOf('/') + 1;
+	const fileName = path.substring(fileNameIndex);
+	const name = fileName.split('.')[0];
+	const json = {};
 	sheetNames.forEach((item, index)=>{
-		// 根据表名获取对应某张表
 		const worksheet = workbook.Sheets[item];
-		try {
-			fs.writeFileSync(`${outDir}/${item}.json`, getJsonOfsheet(worksheet, item));
-		} catch(err){
-			console.log('写文件出错', err);
-		}
-	})
+		json[item] = getJsonOfsheet(worksheet, item, name);
+	});
+	try {
+		fs.writeFileSync(`${outDir}/${name}.json`, JSON.stringify(json));
+	} catch(err){
+		console.log('写文件出错', err);
+	}
 }
 
 var program = require('commander');
